@@ -411,11 +411,20 @@ JS_METHOD(Uniform2fv) {
   JS_BOILERPLATE
 
   int location = args[0]->Int32Value();
-  int num=0;
-  GLfloat *ptr=getArrayData<GLfloat>(args[1],&num);
-  num /= 2;
 
-  glUniform2fv(location, num, ptr);
+  if (args[1]->IsArray()) {
+    Local<Array> arr =  Local<Array>::Cast(args[1]);
+    if (arr->Length() >= 2) {
+      double a = arr->Get(0)->NumberValue();
+      double b = arr->Get(1)->NumberValue();
+      glUniform2f(location, a, b);
+    } else {
+      // TODO: handle
+    }
+  } else {
+    // TODO: handle
+  }
+
   return scope.Close(Undefined());
 }
 
@@ -423,11 +432,20 @@ JS_METHOD(Uniform3fv) {
   JS_BOILERPLATE
 
   int location = args[0]->Int32Value();
-  int num=0;
-  GLfloat *ptr=getArrayData<GLfloat>(args[1],&num);
-  num /= 3;
+  if (args[1]->IsArray()) {
+    Local<Array> arr =  Local<Array>::Cast(args[1]);
+    if (arr->Length() >= 3) {
+      double a = arr->Get(0)->NumberValue();
+      double b = arr->Get(1)->NumberValue();
+      double c = arr->Get(2)->NumberValue();
+      glUniform3f(location, a, b, c);
+    } else {
+      // TODO: handle
+    }
+  } else {
+    // TODO: handle
+  }
 
-  glUniform3fv(location, num, ptr);
   return scope.Close(Undefined());
 }
 
@@ -435,11 +453,22 @@ JS_METHOD(Uniform4fv) {
   JS_BOILERPLATE
 
   int location = args[0]->Int32Value();
-  int num=0;
-  GLfloat *ptr=getArrayData<GLfloat>(args[1],&num);
-  num /= 4;
 
-  glUniform4fv(location, num, ptr);
+  if (args[1]->IsArray()) {
+    Local<Array> arr =  Local<Array>::Cast(args[1]);
+    if (arr->Length() >= 4) {
+      double a = arr->Get(0)->NumberValue();
+      double b = arr->Get(1)->NumberValue();
+      double c = arr->Get(2)->NumberValue();
+      double d = arr->Get(3)->NumberValue();
+      glUniform4f(location, a, b, c, d);
+    } else {
+      // TODO: handle
+    }
+  } else {
+    // TODO: handle
+  }
+
   return scope.Close(Undefined());
 }
 
