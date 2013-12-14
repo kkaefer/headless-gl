@@ -221,10 +221,16 @@ void WebGL::disposeAll() {
 Handle<Value> WebGL::New(const Arguments& args) {
   HandleScope scope;
 
-  WebGL* instance = new WebGL(args[0]->Int32Value(), args[1]->Int32Value());
+  int width = args[0]->Int32Value();
+  int height = args[1]->Int32Value();
+
+  WebGL* instance = new WebGL(width, height);
   if(!instance->initialized) {
     return ThrowError("Error creating WebGLRenderingContext");
   }
+
+  args.This()->Set(String::New("drawingBufferWidth"), Integer::New(width), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
+  args.This()->Set(String::New("drawingBufferHeight"), Integer::New(height), static_cast<PropertyAttribute>(ReadOnly | DontDelete));
 
   instance->Wrap(args.This());
   return args.This();
