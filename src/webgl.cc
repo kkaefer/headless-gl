@@ -223,7 +223,7 @@ Handle<Value> WebGL::New(const Arguments& args) {
   
   WebGL* instance = new WebGL(args[0]->Int32Value(), args[1]->Int32Value());
   if(!instance->initialized) {
-    return ThrowError("Error creating WebGLContext");
+    return ThrowError("Error creating WebGLRenderingContext");
   }
   
   instance->Wrap(args.This());

@@ -17,7 +17,8 @@
   "devDependencies": {
     "jsdom": "~0.5.6",
     "tap": "~0.4.1",
-    "canvas": ""
+    "canvas": "",
+    "mocha": "~1.15.1"
   },
   "repository": {
     "type": "git",

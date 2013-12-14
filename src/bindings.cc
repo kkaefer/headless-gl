@@ -34,7 +34,7 @@ static void init(Handle<Object> target)
   webgl_template = v8::Persistent<v8::FunctionTemplate>::New(t);
   
   webgl_template->InstanceTemplate()->SetInternalFieldCount(1);
-  webgl_template->SetClassName(JS_STR("WebGLContext"));
+  webgl_template->SetClassName(JS_STR("WebGLRenderingContext"));
   
   //Add methods
   NODE_SET_PROTOTYPE_METHOD(webgl_template, "uniform1f", WebGL::Uniform1f);
@@ -635,7 +635,7 @@ static void init(Handle<Object> target)
   webgl_template->PrototypeTemplate()->Set(JS_STR( "BROWSER_DEFAULT_WEBGL" ), JS_INT(0x9244));
   
   //Export function
-  target->Set(JS_STR("WebGLContext"), webgl_template->GetFunction());
+  target->Set(JS_STR("WebGLRenderingContext"), webgl_template->GetFunction());
 }
 
 NODE_MODULE(webgl, init)
