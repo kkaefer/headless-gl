@@ -221,11 +221,21 @@ void WebGL::disposeAll() {
 Handle<Value> WebGL::New(const Arguments& args) {
   HandleScope scope;
 
+  if (args.Length() < 2) {
+    return ThrowException(Exception::TypeError(String::New("Width and height arguments required")));
+  }
+
   int width = args[0]->Int32Value();
   int height = args[1]->Int32Value();
 
+  if (width <= 0) {
+    return ThrowException(Exception::TypeError(String::New("Width is not a positive integer")));
+  } else if (height <= 0) {
+    return ThrowException(Exception::TypeError(String::New("Height is not a positive integer")));
+  }
+
   WebGL* instance = new WebGL(width, height);
-  if(!instance->initialized) {
+  if (!instance->initialized) {
     return ThrowError("Error creating WebGLRenderingContext");
   }
 

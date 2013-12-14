@@ -1,6 +1,6 @@
 "use strict"
 
-var WebGLContext = require("./webgl.js");
+var WebGLRenderingContext = require("./webgl.js");
 
 //Interoperate with node-canvas when available
 (function() {
@@ -12,7 +12,7 @@ var WebGLContext = require("./webgl.js");
             if (this._gl_context) {
                 return this._gl_context;
             }
-            this._gl_context = new WebGLContext();
+            this._gl_context = new WebGLRenderingContext();
             return this._gl_context;
         }
         return pgetContext.call(this, contextid);
@@ -28,5 +28,7 @@ var WebGLContext = require("./webgl.js");
 
 
 module.exports.createContext = function(width, height) {
-    return new WebGLContext(width, height);
+    return new WebGLRenderingContext(width, height);
 }
+
+module.exports.WebGLRenderingContext = WebGLRenderingContext;
