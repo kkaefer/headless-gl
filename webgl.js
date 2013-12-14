@@ -804,13 +804,13 @@ gl.texImage2D = function texImage2D(target, level, internalformat, width, height
         typeof target === "number" &&
         typeof level === "number" && typeof internalformat === "number" &&
         typeof width === "number" && typeof height === "number" &&
-        border === null)) {
+        typeof border === "object")) {
       throw new TypeError('Expected texImage2D(number target, number level, number internalformat, number format, number type, Image pixels)');
     }
     pixels=border;
     type=height;
     format=width;
-    return _texImage2D.call(this, target, level, internalformat, pixels.width, pixels.height, 0, format, type, pixels);
+    return _texImage2D.call(this, target, level, internalformat, pixels.width, pixels.height, 0, format, type, new Buffer(pixels.data));
   }
   else if (arguments.length == 9) {
     if(!(typeof target === "number" &&
