@@ -20,7 +20,7 @@
 
     #define USE_AGL                           1
     #define GL_CONTEXT_TYPE                   AGLContext
-    
+
 #elif defined(WIN32)
 
     //Not implemented

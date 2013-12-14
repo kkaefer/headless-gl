@@ -38,7 +38,7 @@ struct GLObj {
 
 class WebGL : public node::ObjectWrap {
 public:
-  
+
   //OpenGL context stuff
   bool initialized;
   bool atExit;
@@ -54,11 +54,11 @@ public:
   void unregisterGLObj(GLuint obj);
   void dispose();
   static void disposeAll();
-  
+
   //Constructor/destructor
   WebGL(int width, int height);
   virtual ~WebGL();
-  
+
   JS_METHOD(New);
   JS_METHOD(Destroy);
 
@@ -201,7 +201,7 @@ public:
 
   JS_METHOD(FrontFace);
   JS_METHOD(SampleCoverage);
-  
+
 };
 
 #undef JS_METHOD

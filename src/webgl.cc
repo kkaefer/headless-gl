@@ -43,9 +43,9 @@ WebGL*  active_context = NULL;
 WebGL::WebGL(int width, int height) :
   initialized(false),
   atExit(false) {
-  
+
   #ifdef USE_AGL
-  
+
     //Create AGL context
     GLint pixelAttr[] = {
       AGL_RGBA,
@@ -54,7 +54,7 @@ WebGL::WebGL(int width, int height) :
       AGL_ACCELERATED,
       AGL_NONE
     };
-  
+
     AGLPixelFormat aglPixelFormat = aglChoosePixelFormat(NULL, 0, pixelAttr);
     if (aglPixelFormat == NULL) {
       fprintf(stderr, "Error pixel format\n");
@@ -67,7 +67,7 @@ WebGL::WebGL(int width, int height) :
       fprintf(stderr, "Error creating GL context!\n");
       return;
     }
-  
+
     if (!aglSetCurrentContext(gl_context)) {
       fprintf(stderr, "aglSetCurrentContext failed\n");
       return;
@@ -76,12 +76,12 @@ WebGL::WebGL(int width, int height) :
   #endif
 
   #ifdef USE_GLX
-    
+
     display = XOpenDisplay(0);
 
     static int attributeList[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_RED_SIZE, 1, GLX_GREEN_SIZE, 1, GLX_BLUE_SIZE, 1, None };
     XVisualInfo *vi = glXChooseVisual(display, DefaultScreen(display),attributeList);
-   
+
     //oldstyle context:
     gl_context = glXCreateContext(display, vi, 0, GL_TRUE);
 
@@ -101,7 +101,7 @@ WebGL::WebGL(int width, int height) :
 
     initialized = true;
   #endif
-  
+
   if (!initialized) {
     initialized = false;
     fprintf(stderr, "Unsupported system\n");
@@ -119,7 +119,7 @@ void WebGL::dispose() {
   if(!checkContext()) {
     return;
   }
-  
+
   //Remove context from list
   for(vector<WebGL*>::iterator it=contexts.begin(); it!=contexts.end(); ++it) {
     if(*it == this) {
@@ -127,7 +127,7 @@ void WebGL::dispose() {
       break;
     }
   }
-  
+
   atExit=true;
   for(vector<GLObj*>::iterator it = globjs.begin(); it != globjs.end(); ++it) {
     GLObj *globj=*it;
@@ -159,13 +159,13 @@ void WebGL::dispose() {
   }
 
   globjs.clear();
-  
-  
+
+
   //Destroy context
   #ifdef USE_AGL
     aglDestroyContext(gl_context);
   #endif
-  
+
   #ifdef USE_GLX
     glXDestroyContext(display, gl_context);
     glXDestroyPixmap (display, glXPixmap);
@@ -186,7 +186,7 @@ bool WebGL::checkContext() {
   #ifdef USE_AGL
     return aglSetCurrentContext(gl_context);
   #endif
-  
+
   #ifdef USE_GLX
     return true;
   #endif
@@ -220,12 +220,12 @@ void WebGL::disposeAll() {
 
 Handle<Value> WebGL::New(const Arguments& args) {
   HandleScope scope;
-  
+
   WebGL* instance = new WebGL(args[0]->Int32Value(), args[1]->Int32Value());
   if(!instance->initialized) {
     return ThrowError("Error creating WebGLRenderingContext");
   }
-  
+
   instance->Wrap(args.This());
   return args.This();
 }
@@ -300,7 +300,7 @@ inline Type* getArrayData(Local<Value> arg, int* num = NULL) {
 
 JS_METHOD(Destroy) {
   JS_BOILERPLATE
-  
+
   inst->dispose();
   return scope.Close(Undefined());
 }

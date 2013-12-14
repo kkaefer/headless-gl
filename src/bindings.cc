@@ -28,14 +28,14 @@ static void init(Handle<Object> target)
 {
   //When node exits kill any stray gl contexts
   atexit(WebGL::disposeAll);
-  
+
   //Create the WebGL template
   v8::Local<FunctionTemplate> t = v8::FunctionTemplate::New(WebGL::New);
   webgl_template = v8::Persistent<v8::FunctionTemplate>::New(t);
-  
+
   webgl_template->InstanceTemplate()->SetInternalFieldCount(1);
   webgl_template->SetClassName(JS_STR("WebGLRenderingContext"));
-  
+
   //Add methods
   NODE_SET_PROTOTYPE_METHOD(webgl_template, "uniform1f", WebGL::Uniform1f);
   NODE_SET_PROTOTYPE_METHOD(webgl_template, "uniform2f", WebGL::Uniform2f);
@@ -179,7 +179,7 @@ static void init(Handle<Object> target)
   NODE_SET_PROTOTYPE_METHOD(webgl_template, "frontFace", WebGL::FrontFace);
   NODE_SET_PROTOTYPE_METHOD(webgl_template, "sampleCoverage", WebGL::SampleCoverage);
   NODE_SET_PROTOTYPE_METHOD(webgl_template, "destroy", WebGL::Destroy);
-  
+
 
   // OpenGL ES 2.1 constants
 
@@ -633,7 +633,7 @@ static void init(Handle<Object> target)
   webgl_template->PrototypeTemplate()->Set(JS_STR( "CONTEXT_LOST_WEBGL" ), JS_INT(0x9242));
   webgl_template->PrototypeTemplate()->Set(JS_STR( "UNPACK_COLORSPACE_CONVERSION_WEBGL" ), JS_INT(0x9243));
   webgl_template->PrototypeTemplate()->Set(JS_STR( "BROWSER_DEFAULT_WEBGL" ), JS_INT(0x9244));
-  
+
   //Export function
   target->Set(JS_STR("WebGLRenderingContext"), webgl_template->GetFunction());
 }

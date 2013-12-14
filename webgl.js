@@ -128,7 +128,7 @@ gl.blendFuncSeparate = function blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstA
 
 var _bufferData = gl.bufferData;
 gl.bufferData = function bufferData(target, data, usage) {
-  if (!(arguments.length === 3 && typeof target === "number" && 
+  if (!(arguments.length === 3 && typeof target === "number" &&
       (typeof data === "object" || typeof data === "number") && typeof usage === "number")) {
     throw new TypeError('Expected bufferData(number target, ArrayBuffer data, number usage) or bufferData(number target, number size, number usage)');
   }
@@ -596,7 +596,7 @@ gl.getVertexAttribOffset = function getVertexAttribOffset(index, pname) {
   if (!(arguments.length === 2 && typeof index === "number" && typeof pname === "number")) {
     throw new TypeError('Expected getVertexAttribOffset(number index, number pname)');
   }
-  
+
   if(pname === gl.CURRENT_VERTEX_ATTRIB) {
     var buf=_getVertexAttribOffset(index, pname);
     return new Float32Array(buf);
@@ -689,7 +689,7 @@ gl.pixelStorei = function pixelStorei(pname, param) {
   if (!(arguments.length === 2 && typeof pname === "number" && (typeof param === "number") || typeof param === "boolean")) {
     throw new TypeError('Expected pixelStorei(number pname, number param)');
   }
-  
+
   if(typeof param === "boolean")
     param= param ? 1 : 0;
   return _pixelStorei.call(this, pname, param);
@@ -801,10 +801,10 @@ gl.texImage2D = function texImage2D(target, level, internalformat, width, height
   if (arguments.length == 6) {
     // width is now format, height is now type, and border is now pixels
     if(!(
-        typeof target === "number" && 
-        typeof level === "number" && typeof internalformat === "number" && 
-        typeof width === "number" && typeof height === "number" && 
-        border==null)) {
+        typeof target === "number" &&
+        typeof level === "number" && typeof internalformat === "number" &&
+        typeof width === "number" && typeof height === "number" &&
+        border === null)) {
       throw new TypeError('Expected texImage2D(number target, number level, number internalformat, number format, number type, Image pixels)');
     }
     pixels=border;
@@ -813,10 +813,10 @@ gl.texImage2D = function texImage2D(target, level, internalformat, width, height
     return _texImage2D.call(this, target, level, internalformat, pixels.width, pixels.height, 0, format, type, pixels);
   }
   else if (arguments.length == 9) {
-    if(!(typeof target === "number" && 
-        typeof level === "number" && typeof internalformat === "number" && 
-        typeof width === "number" && typeof height === "number" && typeof border === "number" && 
-        typeof format === "number" && typeof type === "number" && 
+    if(!(typeof target === "number" &&
+        typeof level === "number" && typeof internalformat === "number" &&
+        typeof width === "number" && typeof height === "number" && typeof border === "number" &&
+        typeof format === "number" && typeof type === "number" &&
         (pixels==null || typeof pixels === "object"))) {
       throw new TypeError('Expected texImage2D(number target, number level, number internalformat, number width, number height, number border, number format, number type, ArrayBufferView pixels)');
     }
@@ -842,10 +842,10 @@ gl.texParameteri = function texParameteri(target, pname, param) {
 
 var _texSubImage2D = gl.texSubImage2D;
 gl.texSubImage2D = function texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels) {
-  if (!(arguments.length === 9 && typeof target === "number" && typeof level === "number" && 
-      typeof xoffset === "number" && typeof yoffset === "number" && 
-      typeof width === "number" && typeof height === "number" && 
-      typeof format === "number" && typeof type === "number" && 
+  if (!(arguments.length === 9 && typeof target === "number" && typeof level === "number" &&
+      typeof xoffset === "number" && typeof yoffset === "number" &&
+      typeof width === "number" && typeof height === "number" &&
+      typeof format === "number" && typeof type === "number" &&
       (pixels==null || typeof pixels === "object"))) {
     throw new TypeError('Expected texSubImage2D(number target, number level, number xoffset, number yoffset, number width, number height, number format, number type, ArrayBufferView pixels)');
   }
