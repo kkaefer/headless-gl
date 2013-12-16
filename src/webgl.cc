@@ -28,6 +28,9 @@ Handle<Value> ThrowError(const char *msg) {
   return ThrowException(Exception::Error(String::New(msg)));
 }
 
+Handle<Value> ThrowTypeError(const char *msg) {
+  return ThrowException(Exception::TypeError(String::New(msg)));
+}
 
 namespace HeadlessGL {
 
@@ -1955,13 +1958,17 @@ JS_METHOD(GetSupportedExtensions) {
 JS_METHOD(GetExtension) {
   JS_BOILERPLATE
 
+  if (args.Length() < 1 || !args[0]->IsString()) {
+    ThrowTypeError("First parameter must be a string");
+  }
+
   String::AsciiValue name(args[0]);
   char *sname = *name;
-  char *extensions = (char *) glGetString(GL_EXTENSIONS);
+  char *extensions = (char *)glGetString(GL_EXTENSIONS);
 
   char *ext = strcasestr(extensions, sname);
 
-  if (!ext) return scope.Close(Undefined());
+  if (!ext) return scope.Close(Null());
   return scope.Close(String::New(ext, (int)::strlen(sname)));
 }
 

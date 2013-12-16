@@ -22,14 +22,6 @@ gl.getSupportedExtensions = function getSupportedExtensions() {
   return _getSupportedExtensions.call(this).split(" ");
 }
 
-var _getExtension = gl.getExtension;
-gl.getExtension = function getExtension(name) {
-  if (!(arguments.length === 1 && typeof name === "string")) {
-    throw new TypeError('Expected getExtension(string name)');
-  }
-  return _getExtension.call(this, name);
-}
-
 var _activeTexture = gl.activeTexture;
 gl.activeTexture = function activeTexture(texture) {
   if (!(arguments.length === 1 && typeof texture === "number")) {
