@@ -86,37 +86,6 @@ WebGL::WebGL(int width, int height) :
   initialized = true;
 #endif
 
-#ifdef USE_AGL
-
-  //Create AGL context
-  GLint pixelAttr[] = {
-    AGL_RGBA,
-    AGL_DOUBLEBUFFER,
-    AGL_PIXEL_SIZE, 32,
-    AGL_ACCELERATED,
-    AGL_NONE
-  };
-
-  AGLPixelFormat aglPixelFormat = aglChoosePixelFormat(NULL, 0, pixelAttr);
-  if (aglPixelFormat == NULL) {
-    fprintf(stderr, "Error pixel format\n");
-    return;
-  }
-
-  gl_context = aglCreateContext(aglPixelFormat, NULL);
-  aglDestroyPixelFormat(aglPixelFormat);
-  if (gl_context == NULL) {
-    fprintf(stderr, "Error creating GL context!\n");
-    return;
-  }
-
-  if (!aglSetCurrentContext(gl_context)) {
-    fprintf(stderr, "aglSetCurrentContext failed\n");
-    return;
-  }
-  initialized = true;
-#endif
-
 #ifdef USE_GLX
 
   display = XOpenDisplay(0);
@@ -203,9 +172,8 @@ void WebGL::dispose() {
   globjs.clear();
 
 
-  //Destroy context
-#ifdef USE_AGL
-  aglDestroyContext(gl_context);
+#ifdef USE_CGL
+  CGLDestroyContext(gl_context);
 #endif
 
 #ifdef USE_GLX
@@ -227,15 +195,6 @@ bool WebGL::checkContext() {
 #ifdef USE_CGL
   CGLError error = CGLSetCurrentContext(gl_context);
   if (error) {
-    fprintf(stderr, "Switching OpenGL context failed\n");
-    return false;
-  }
-  active_context = this;
-  return true;
-#endif
-
-#ifdef USE_AGL
-  if (!aglSetCurrentContext(gl_context)) {
     fprintf(stderr, "Switching OpenGL context failed\n");
     return false;
   }

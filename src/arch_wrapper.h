@@ -16,7 +16,6 @@
 
 #if defined (__APPLE__) || defined(MACOSX)
 
-// #include <AGL/agl.h>
 #include <OpenGL/OpenGL.h>
 #include <opengl/gl3.h>
 
