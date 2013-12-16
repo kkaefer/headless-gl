@@ -17,10 +17,12 @@
 #include <vector>
 
 #include <v8.h>
-#include <node.h>
+// #include <node.h>
 #include "arch_wrapper.h"
 
 #define JS_METHOD(name) static v8::Handle<v8::Value> name(const v8::Arguments& args)
+
+namespace HeadlessGL {
 
 enum GLObjectType {
   GLOBJECT_TYPE_BUFFER,
@@ -207,6 +209,8 @@ public:
   JS_METHOD(SampleCoverage);
 
 };
+
+} // end namespace HeadlessGL
 
 #undef JS_METHOD
 

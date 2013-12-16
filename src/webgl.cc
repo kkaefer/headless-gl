@@ -7,9 +7,8 @@
 
 #include <v8.h>
 #include <node.h>
-#include <node_buffer.h>
+// #include <node_buffer.h>
 #include "webgl.h"
-#include "macros.h"
 
 #ifdef _WIN32
 #define  strcasestr(s, t) strstr(strupr(s), t)
@@ -27,12 +26,14 @@
     return ThrowError("Invalid GL context"); \
   }
 
-v8::Handle<v8::Value> ThrowError(const char *msg) {
-  return v8::ThrowException(v8::Exception::Error(v8::String::New(msg)));
-}
-
 using namespace v8;
 
+Handle<Value> ThrowError(const char *msg) {
+  return ThrowException(Exception::Error(String::New(msg)));
+}
+
+
+namespace HeadlessGL {
 
 std::vector<WebGL *> contexts;
 WebGL *active_context = NULL;
@@ -723,14 +724,14 @@ JS_METHOD(GetShaderParameter) {
   case GL_DELETE_STATUS:
   case GL_COMPILE_STATUS:
     glGetShaderiv(shader, pname, &value);
-    return scope.Close(JS_BOOL(static_cast<bool>(value != 0)));
+    return scope.Close(v8::Boolean::New(static_cast<bool>(value != 0)));
   case GL_SHADER_TYPE:
     glGetShaderiv(shader, pname, &value);
-    return scope.Close(JS_INT(static_cast<unsigned long>(value)));
+    return scope.Close(Number::New(static_cast<unsigned long>(value)));
   case GL_INFO_LOG_LENGTH:
   case GL_SHADER_SOURCE_LENGTH:
     glGetShaderiv(shader, pname, &value);
-    return scope.Close(JS_INT(static_cast<long>(value)));
+    return scope.Close(Number::New(static_cast<long>(value)));
   default:
     return ThrowException(Exception::TypeError(String::New("GetShaderParameter: Invalid Enum")));
   }
@@ -790,12 +791,12 @@ JS_METHOD(GetProgramParameter) {
   case GL_LINK_STATUS:
   case GL_VALIDATE_STATUS:
     glGetProgramiv(program, pname, &value);
-    return scope.Close(JS_BOOL(static_cast<bool>(value != 0)));
+    return scope.Close(v8::Boolean::New(static_cast<bool>(value != 0)));
   case GL_ATTACHED_SHADERS:
   case GL_ACTIVE_ATTRIBUTES:
   case GL_ACTIVE_UNIFORMS:
     glGetProgramiv(program, pname, &value);
-    return scope.Close(JS_INT(static_cast<long>(value)));
+    return scope.Close(Number::New(static_cast<long>(value)));
   default:
     return ThrowException(Exception::TypeError(String::New("GetProgramParameter: Invalid Enum")));
   }
@@ -808,7 +809,7 @@ JS_METHOD(GetUniformLocation) {
   int program = args[0]->Int32Value();
   String::AsciiValue name(args[1]);
 
-  return scope.Close(JS_INT(glGetUniformLocation(program, *name)));
+  return scope.Close(Number::New(glGetUniformLocation(program, *name)));
 }
 
 
@@ -1548,7 +1549,7 @@ JS_METHOD(GetVertexAttribOffset) {
   void *ret = NULL;
 
   glGetVertexAttribPointerv(index, pname, &ret);
-  return scope.Close(JS_INT(ToGLuint(ret)));
+  return scope.Close(Number::New(ToGLuint(ret)));
 }
 
 JS_METHOD(IsBuffer) {
@@ -1560,31 +1561,31 @@ JS_METHOD(IsBuffer) {
 JS_METHOD(IsFramebuffer) {
   JS_BOILERPLATE
 
-  return scope.Close(JS_BOOL(glIsFramebuffer(args[0]->Uint32Value()) != 0));
+  return scope.Close(v8::Boolean::New(glIsFramebuffer(args[0]->Uint32Value()) != 0));
 }
 
 JS_METHOD(IsProgram) {
   JS_BOILERPLATE
 
-  return scope.Close(JS_BOOL(glIsProgram(args[0]->Uint32Value()) != 0));
+  return scope.Close(v8::Boolean::New(glIsProgram(args[0]->Uint32Value()) != 0));
 }
 
 JS_METHOD(IsRenderbuffer) {
   JS_BOILERPLATE
 
-  return scope.Close(JS_BOOL(glIsRenderbuffer( args[0]->Uint32Value()) != 0));
+  return scope.Close(v8::Boolean::New(glIsRenderbuffer( args[0]->Uint32Value()) != 0));
 }
 
 JS_METHOD(IsShader) {
   JS_BOILERPLATE
 
-  return scope.Close(JS_BOOL(glIsShader(args[0]->Uint32Value()) != 0));
+  return scope.Close(v8::Boolean::New(glIsShader(args[0]->Uint32Value()) != 0));
 }
 
 JS_METHOD(IsTexture) {
   JS_BOILERPLATE
 
-  return scope.Close(JS_BOOL(glIsTexture(args[0]->Uint32Value()) != 0));
+  return scope.Close(v8::Boolean::New(glIsTexture(args[0]->Uint32Value()) != 0));
 }
 
 JS_METHOD(RenderbufferStorage) {
@@ -1682,9 +1683,9 @@ JS_METHOD(GetActiveAttrib) {
   glGetActiveAttrib(program, index, 1024, &length, &size, &type, name);
 
   Local<Array> activeInfo = Array::New(3);
-  activeInfo->Set(JS_STR("size"), JS_INT(size));
-  activeInfo->Set(JS_STR("type"), JS_INT((int)type));
-  activeInfo->Set(JS_STR("name"), JS_STR(name));
+  activeInfo->Set(String::New("size"), Number::New(size));
+  activeInfo->Set(String::New("type"), Number::New((int)type));
+  activeInfo->Set(String::New("name"), String::New(name));
 
   return scope.Close(activeInfo);
 }
@@ -1702,9 +1703,9 @@ JS_METHOD(GetActiveUniform) {
   glGetActiveUniform(program, index, 1024, &length, &size, &type, name);
 
   Local<Array> activeInfo = Array::New(3);
-  activeInfo->Set(JS_STR("size"), JS_INT(size));
-  activeInfo->Set(JS_STR("type"), JS_INT((int)type));
-  activeInfo->Set(JS_STR("name"), JS_STR(name));
+  activeInfo->Set(String::New("size"), Number::New(size));
+  activeInfo->Set(String::New("type"), Number::New((int)type));
+  activeInfo->Set(String::New("name"), String::New(name));
 
   return scope.Close(activeInfo);
 }
@@ -1720,7 +1721,7 @@ JS_METHOD(GetAttachedShaders) {
 
   Local<Array> shadersArr = Array::New(count);
   for (int i = 0; i < count; i++)
-    shadersArr->Set(i, JS_INT((int)shaders[i]));
+    shadersArr->Set(i, Number::New((int)shaders[i]));
 
   return scope.Close(shadersArr);
 }
@@ -1745,7 +1746,7 @@ JS_METHOD(GetParameter) {
     // return a boolean
     GLboolean params;
     ::glGetBooleanv(name, &params);
-    return scope.Close(JS_BOOL(params != 0));
+    return scope.Close(v8::Boolean::New(params != 0));
   }
   case GL_DEPTH_CLEAR_VALUE:
   case GL_LINE_WIDTH:
@@ -1755,7 +1756,7 @@ JS_METHOD(GetParameter) {
     // return a float
     GLfloat params;
     ::glGetFloatv(name, &params);
-    return scope.Close(JS_FLOAT(params));
+    return scope.Close(Number::New(params));
   }
   case GL_RENDERER:
   case GL_SHADING_LANGUAGE_VERSION:
@@ -1764,7 +1765,7 @@ JS_METHOD(GetParameter) {
   case GL_EXTENSIONS: {
     // return a string
     char *params = (char *) ::glGetString(name);
-    return scope.Close(params ? JS_STR(params) : Undefined());
+    return scope.Close(params ? String::New(params) : Undefined());
   }
   case GL_MAX_VIEWPORT_DIMS: {
     // return a int32[2]
@@ -1772,8 +1773,8 @@ JS_METHOD(GetParameter) {
     ::glGetIntegerv(name, params);
 
     Local<Array> arr = Array::New(2);
-    arr->Set(0, JS_INT(params[0]));
-    arr->Set(1, JS_INT(params[1]));
+    arr->Set(0, Number::New(params[0]));
+    arr->Set(1, Number::New(params[1]));
     return scope.Close(arr);
   }
   case GL_SCISSOR_BOX:
@@ -1783,10 +1784,10 @@ JS_METHOD(GetParameter) {
     ::glGetIntegerv(name, params);
 
     Local<Array> arr = Array::New(4);
-    arr->Set(0, JS_INT(params[0]));
-    arr->Set(1, JS_INT(params[1]));
-    arr->Set(2, JS_INT(params[2]));
-    arr->Set(3, JS_INT(params[3]));
+    arr->Set(0, Number::New(params[0]));
+    arr->Set(1, Number::New(params[1]));
+    arr->Set(2, Number::New(params[2]));
+    arr->Set(3, Number::New(params[3]));
     return scope.Close(arr);
   }
   case GL_ALIASED_LINE_WIDTH_RANGE:
@@ -1796,8 +1797,8 @@ JS_METHOD(GetParameter) {
     GLfloat params[2];
     ::glGetFloatv(name, params);
     Local<Array> arr = Array::New(2);
-    arr->Set(0, JS_FLOAT(params[0]));
-    arr->Set(1, JS_FLOAT(params[1]));
+    arr->Set(0, Number::New(params[0]));
+    arr->Set(1, Number::New(params[1]));
     return scope.Close(arr);
   }
   case GL_BLEND_COLOR:
@@ -1806,10 +1807,10 @@ JS_METHOD(GetParameter) {
     GLfloat params[4];
     ::glGetFloatv(name, params);
     Local<Array> arr = Array::New(4);
-    arr->Set(0, JS_FLOAT(params[0]));
-    arr->Set(1, JS_FLOAT(params[1]));
-    arr->Set(2, JS_FLOAT(params[2]));
-    arr->Set(3, JS_FLOAT(params[3]));
+    arr->Set(0, Number::New(params[0]));
+    arr->Set(1, Number::New(params[1]));
+    arr->Set(2, Number::New(params[2]));
+    arr->Set(3, Number::New(params[3]));
     return scope.Close(arr);
   }
   case GL_COLOR_WRITEMASK: {
@@ -1817,10 +1818,10 @@ JS_METHOD(GetParameter) {
     GLboolean params[4];
     ::glGetBooleanv(name, params);
     Local<Array> arr = Array::New(4);
-    arr->Set(0, JS_BOOL(params[0] == 1));
-    arr->Set(1, JS_BOOL(params[1] == 1));
-    arr->Set(2, JS_BOOL(params[2] == 1));
-    arr->Set(3, JS_BOOL(params[3] == 1));
+    arr->Set(0, v8::Boolean::New(params[0] == 1));
+    arr->Set(1, v8::Boolean::New(params[1] == 1));
+    arr->Set(2, v8::Boolean::New(params[2] == 1));
+    arr->Set(3, v8::Boolean::New(params[3] == 1));
     return scope.Close(arr);
   }
   case GL_ARRAY_BUFFER_BINDING:
@@ -1832,13 +1833,13 @@ JS_METHOD(GetParameter) {
   case GL_TEXTURE_BINDING_CUBE_MAP: {
     GLint params;
     ::glGetIntegerv(name, &params);
-    return scope.Close(JS_INT(params));
+    return scope.Close(Number::New(params));
   }
   default: {
     // return a long
     GLint params;
     ::glGetIntegerv(name, &params);
-    return scope.Close(JS_INT(params));
+    return scope.Close(Number::New(params));
   }
   }
 
@@ -1853,7 +1854,7 @@ JS_METHOD(GetBufferParameter) {
 
   GLint params;
   glGetBufferParameteriv(target, pname, &params);
-  return scope.Close(JS_INT(params));
+  return scope.Close(Number::New(params));
 }
 
 JS_METHOD(GetFramebufferAttachmentParameter) {
@@ -1865,7 +1866,7 @@ JS_METHOD(GetFramebufferAttachmentParameter) {
 
   GLint params;
   glGetFramebufferAttachmentParameteriv(target, attachment, pname, &params);
-  return scope.Close(JS_INT(params));
+  return scope.Close(Number::New(params));
 }
 
 JS_METHOD(GetProgramInfoLog) {
@@ -1887,7 +1888,7 @@ JS_METHOD(GetRenderbufferParameter) {
   int value = 0;
   glGetRenderbufferParameteriv(target, pname, &value);
 
-  return scope.Close(JS_INT(value));
+  return scope.Close(Number::New(value));
 }
 
 JS_METHOD(GetVertexAttrib) {
@@ -1902,23 +1903,23 @@ JS_METHOD(GetVertexAttrib) {
   case GL_VERTEX_ATTRIB_ARRAY_ENABLED:
   case GL_VERTEX_ATTRIB_ARRAY_NORMALIZED:
     glGetVertexAttribiv(index, pname, &value);
-    return scope.Close(JS_BOOL(value != 0));
+    return scope.Close(v8::Boolean::New(value != 0));
   case GL_VERTEX_ATTRIB_ARRAY_SIZE:
   case GL_VERTEX_ATTRIB_ARRAY_STRIDE:
   case GL_VERTEX_ATTRIB_ARRAY_TYPE:
     glGetVertexAttribiv(index, pname, &value);
-    return scope.Close(JS_INT(value));
+    return scope.Close(Number::New(value));
   case GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING:
     glGetVertexAttribiv(index, pname, &value);
-    return scope.Close(JS_INT(value));
+    return scope.Close(Number::New(value));
   case GL_CURRENT_VERTEX_ATTRIB: {
     float vextex_attribs[4];
     glGetVertexAttribfv(index, pname, vextex_attribs);
     Local<Array> arr = Array::New(4);
-    arr->Set(0, JS_FLOAT(vextex_attribs[0]));
-    arr->Set(1, JS_FLOAT(vextex_attribs[1]));
-    arr->Set(2, JS_FLOAT(vextex_attribs[2]));
-    arr->Set(3, JS_FLOAT(vextex_attribs[3]));
+    arr->Set(0, Number::New(vextex_attribs[0]));
+    arr->Set(1, Number::New(vextex_attribs[1]));
+    arr->Set(2, Number::New(vextex_attribs[2]));
+    arr->Set(3, Number::New(vextex_attribs[3]));
     return scope.Close(arr);
   }
   default:
@@ -1933,7 +1934,7 @@ JS_METHOD(GetSupportedExtensions) {
 
   char *extensions = (char *) glGetString(GL_EXTENSIONS);
 
-  return scope.Close(JS_STR(extensions));
+  return scope.Close(String::New(extensions));
 }
 
 // TODO GetExtension(name) return the extension name if found, should be an object...
@@ -1947,7 +1948,7 @@ JS_METHOD(GetExtension) {
   char *ext = strcasestr(extensions, sname);
 
   if (!ext) return scope.Close(Undefined());
-  return scope.Close(JS_STR(ext, (int)::strlen(sname)));
+  return scope.Close(String::New(ext, (int)::strlen(sname)));
 }
 
 JS_METHOD(CheckFramebufferStatus) {
@@ -1955,6 +1956,7 @@ JS_METHOD(CheckFramebufferStatus) {
 
   GLenum target = args[0]->Int32Value();
 
-  return scope.Close(JS_INT((int)glCheckFramebufferStatus(target)));
+  return scope.Close(Number::New((int)glCheckFramebufferStatus(target)));
 }
 
+} // end namespace HeadlessGL

@@ -16,7 +16,6 @@
 #include <node.h>
 #include "arch_wrapper.h"
 #include "webgl.h"
-#include "macros.h"
 
 using namespace v8;
 
