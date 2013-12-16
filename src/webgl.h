@@ -7,6 +7,10 @@
  * Modified by Mikola Lysenko, Feb. 2013
  */
 
+#ifndef BUILDING_NODE_EXTENSION
+#define BUILDING_NODE_EXTENSION
+#endif
+
 #ifndef WEBGL_H_
 #define WEBGL_H_
 

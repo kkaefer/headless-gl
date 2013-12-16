@@ -7,6 +7,9 @@
  * Modified by Mikola Lysenko, Feb. 2013
  */
 
+#ifndef BUILDING_NODE_EXTENSION
+#define BUILDING_NODE_EXTENSION
+#endif
 
 #include <cstdlib>
 #include <v8.h>
