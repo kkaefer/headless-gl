@@ -16,27 +16,27 @@
 
 #if defined (__APPLE__) || defined(MACOSX)
 
-    #include <AGL/agl.h>
+#include <AGL/agl.h>
 
-    #define USE_AGL                           1
-    #define GL_CONTEXT_TYPE                   AGLContext
+#define USE_AGL                           1
+#define GL_CONTEXT_TYPE                   AGLContext
 
 #elif defined(WIN32)
 
-    //Not implemented
+//Not implemented
 
 #elif defined(WIN64)
 
-    //Not implemented
+//Not implemented
 
 #else
 
-    //X11 system
-    #include <GL/glew.h>
-    #include <GL/gl.h>
-    #include <GL/glx.h>
-    #define USE_GLX                           1
-    #define GL_CONTEXT_TYPE                   GLXContext
+//X11 system
+#include <GL/glew.h>
+#include <GL/gl.h>
+#include <GL/glx.h>
+#define USE_GLX                           1
+#define GL_CONTEXT_TYPE                   GLXContext
 
 #endif
 #endif

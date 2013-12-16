@@ -35,8 +35,8 @@ struct GLObj {
   GLObjectType type;
   GLuint obj;
   GLObj(GLObjectType type, GLuint obj) {
-    this->type=type;
-    this->obj=obj;
+    this->type = type;
+    this->obj = obj;
   }
 };
 
@@ -47,12 +47,12 @@ public:
   bool initialized;
   bool atExit;
   GL_CONTEXT_TYPE gl_context;
-  #ifdef USE_GLX
+#ifdef USE_GLX
   Display *display;
   Pixmap pixmap;
   GLXPixmap glXPixmap;
-  #endif
-  std::vector<GLObj*> globjs;
+#endif
+  std::vector<GLObj *> globjs;
   bool checkContext();
   void registerGLObj(GLObjectType type, GLuint obj);
   void unregisterGLObj(GLuint obj);
