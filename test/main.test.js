@@ -28,6 +28,10 @@ describe('context properties', function() {
         assert.equal(gl.drawingBufferWidth, 30);
         assert.equal(gl.drawingBufferHeight, 40);
     });
+
+    it('should not call a function with a wrong context', function() {
+        assert.throws(function() { gl.destroy.call({}); }, /Illegal invocation/);
+    });
 });
 
 describe('create contexts manually', function() {
