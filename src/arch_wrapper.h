@@ -11,15 +11,17 @@
 #define GL_LUMINANCE                      0x1909
 #define GL_LUMINANCE_ALPHA                0x190A
 #define GL_GENERATE_MIPMAP_HINT           0x8192
-#define glClearDepthf                     glClearDepth
-#define glDepthRangef                     glDepthRange
+// #define glClearDepthf                     glClearDepth
+// #define glDepthRangef                     glDepthRange
 
 #if defined (__APPLE__) || defined(MACOSX)
 
-#include <AGL/agl.h>
+// #include <AGL/agl.h>
+#include <OpenGL/OpenGL.h>
+#include <opengl/gl3.h>
 
-#define USE_AGL                           1
-#define GL_CONTEXT_TYPE                   AGLContext
+#define USE_CGL                           1
+#define GL_CONTEXT_TYPE                   CGLContextObj
 
 #elif defined(WIN32)
 

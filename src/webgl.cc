@@ -47,6 +47,45 @@ WebGL::WebGL(int width, int height) :
   initialized(false),
   atExit(false) {
 
+#ifdef USE_CGL
+    // TODO: test if OpenGL 4.1 with GL_ARB_ES2_compatibility is supported
+    // If it is, use kCGLOGLPVersion_3_2_Core and enable that extension.
+  CGLPixelFormatAttribute attributes[] = {
+    kCGLPFAOpenGLProfile,
+    (CGLPixelFormatAttribute) kCGLOGLPVersion_Legacy,
+    kCGLPFAAccelerated,
+    // kCGLPFAColorSize, (CGLPixelFormatAttribute)24,
+    // kCGLPFAAlphaSize, (CGLPixelFormatAttribute)8,
+    // TODO: Antialiasing support
+    // kCGLPFASampleBuffers, (CGLPixelFormatAttribute)1,
+    // kCGLPFASamples,  (CGLPixelFormatAttribute)4,
+    NULL
+  };
+
+  CGLPixelFormatObj pixelFormat;
+  GLint num;
+  CGLError error = CGLChoosePixelFormat(attributes, &pixelFormat, &num);
+  // TODO: forward errors to JS
+  if (error) {
+    fprintf(stderr, "Error pixel format\n");
+    return;
+  }
+
+  error = CGLCreateContext(pixelFormat, NULL, &gl_context);
+  CGLDestroyPixelFormat(pixelFormat);
+  if (error) {
+    fprintf(stderr, "Error creating GL context object\n");
+    return;
+  }
+
+  error = CGLSetCurrentContext(gl_context);
+  if (error) {
+    fprintf(stderr, "Switching OpenGL context failed\n");
+    return;
+  }
+  initialized = true;
+#endif
+
 #ifdef USE_AGL
 
   //Create AGL context
@@ -184,10 +223,24 @@ bool WebGL::checkContext() {
   if (this == active_context) {
     return true;
   }
+
+#ifdef USE_CGL
+  CGLError error = CGLSetCurrentContext(gl_context);
+  if (error) {
+    fprintf(stderr, "Switching OpenGL context failed\n");
+    return false;
+  }
   active_context = this;
+  return true;
+#endif
 
 #ifdef USE_AGL
-  return aglSetCurrentContext(gl_context);
+  if (!aglSetCurrentContext(gl_context)) {
+    fprintf(stderr, "Switching OpenGL context failed\n");
+    return false;
+  }
+  active_context = this;
+  return true;
 #endif
 
 #ifdef USE_GLX
