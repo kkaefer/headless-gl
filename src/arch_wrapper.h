@@ -11,8 +11,6 @@
 #define GL_LUMINANCE                      0x1909
 #define GL_LUMINANCE_ALPHA                0x190A
 #define GL_GENERATE_MIPMAP_HINT           0x8192
-// #define glClearDepthf                     glClearDepth
-// #define glDepthRangef                     glDepthRange
 
 #if defined (__APPLE__) || defined(MACOSX)
 
@@ -23,12 +21,10 @@
 #define GL_CONTEXT_TYPE                   CGLContextObj
 
 #elif defined(WIN32)
-
-//Not implemented
+#error There is no Windows support.
 
 #elif defined(WIN64)
-
-//Not implemented
+#error There is no Windows support.
 
 #else
 

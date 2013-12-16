@@ -7,12 +7,8 @@
 
 #include <v8.h>
 #include <node.h>
-// #include <node_buffer.h>
-#include "webgl.h"
 
-#ifdef _WIN32
-#define  strcasestr(s, t) strstr(strupr(s), t)
-#endif
+#include "webgl.h"
 
 #define JS_METHOD(name) v8::Handle<v8::Value> WebGL::name(const v8::Arguments& args)
 
@@ -48,8 +44,8 @@ WebGL::WebGL(int width, int height) :
   atExit(false) {
 
 #ifdef USE_CGL
-    // TODO: test if OpenGL 4.1 with GL_ARB_ES2_compatibility is supported
-    // If it is, use kCGLOGLPVersion_3_2_Core and enable that extension.
+  // TODO: test if OpenGL 4.1 with GL_ARB_ES2_compatibility is supported
+  // If it is, use kCGLOGLPVersion_3_2_Core and enable that extension.
   CGLPixelFormatAttribute attributes[] = {
     kCGLPFAOpenGLProfile,
     (CGLPixelFormatAttribute) kCGLOGLPVersion_Legacy,
@@ -59,7 +55,7 @@ WebGL::WebGL(int width, int height) :
     // TODO: Antialiasing support
     // kCGLPFASampleBuffers, (CGLPixelFormatAttribute)1,
     // kCGLPFASamples,  (CGLPixelFormatAttribute)4,
-    NULL
+    (CGLPixelFormatAttribute) 0
   };
 
   CGLPixelFormatObj pixelFormat;
@@ -84,9 +80,8 @@ WebGL::WebGL(int width, int height) :
     return;
   }
   initialized = true;
-#endif
 
-#ifdef USE_GLX
+#elif USE_GLX
 
   display = XOpenDisplay(0);
 
@@ -111,6 +106,9 @@ WebGL::WebGL(int width, int height) :
   }
 
   initialized = true;
+
+#else
+#error Unknown OpenGL implementation
 #endif
 
   if (!initialized) {
@@ -174,12 +172,14 @@ void WebGL::dispose() {
 
 #ifdef USE_CGL
   CGLDestroyContext(gl_context);
-#endif
 
-#ifdef USE_GLX
+#elif USE_GLX
   glXDestroyContext(display, gl_context);
   glXDestroyPixmap (display, glXPixmap);
   XFreePixmap (display, pixmap);
+
+#else
+#error Unknown OpenGL implementation
 #endif
 }
 
@@ -200,12 +200,14 @@ bool WebGL::checkContext() {
   }
   active_context = this;
   return true;
-#endif
 
-#ifdef USE_GLX
+#elif USE_GLX
+  active_context = this;
   return true;
+
+#else
+#error Unknown OpenGL implementation
 #endif
-  return false;
 }
 
 void WebGL::registerGLObj(GLObjectType type, GLuint obj) {
