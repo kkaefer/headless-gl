@@ -31,13 +31,11 @@ v8::Handle<v8::Value> ThrowError(const char *msg) {
   return v8::ThrowException(v8::Exception::Error(v8::String::New(msg)));
 }
 
-using namespace node;
 using namespace v8;
-using namespace std;
 
 
-vector<WebGL *> contexts;
-WebGL  *active_context = NULL;
+std::vector<WebGL *> contexts;
+WebGL *active_context = NULL;
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -125,7 +123,7 @@ void WebGL::dispose() {
   }
 
   //Remove context from list
-  for (vector<WebGL *>::iterator it = contexts.begin(); it != contexts.end(); ++it) {
+  for (std::vector<WebGL *>::iterator it = contexts.begin(); it != contexts.end(); ++it) {
     if (*it == this) {
       contexts.erase(it);
       break;
@@ -133,7 +131,7 @@ void WebGL::dispose() {
   }
 
   atExit = true;
-  for (vector<GLObj *>::iterator it = globjs.begin(); it != globjs.end(); ++it) {
+  for (std::vector<GLObj *>::iterator it = globjs.begin(); it != globjs.end(); ++it) {
     GLObj *globj = *it;
     GLuint obj = globj->obj;
 
@@ -204,7 +202,7 @@ void WebGL::registerGLObj(GLObjectType type, GLuint obj) {
 void WebGL::unregisterGLObj(GLuint obj) {
   if (atExit) return;
 
-  vector<GLObj *>::iterator it = globjs.begin();
+  std::vector<GLObj *>::iterator it = globjs.begin();
   while (globjs.size() && it != globjs.end()) {
     GLObj *globj = *it;
     if (globj->obj == obj) {
