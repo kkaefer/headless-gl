@@ -1,3 +1,8 @@
+# DEPRECATED. DO NOT USE.
+
+Use https://github.com/mapbox/headless-gl instead.
+
+
 headless-gl
 ===========
 This is a gutted version of [node-webgl](https://github.com/mikeseven/node-webgl) with no external dependencies, DOM emulation or window handling.  You can use it to create WebGL contexts for GPGPU programming and server-side rendering in node.  It should also work in browsers that support WebGL.
